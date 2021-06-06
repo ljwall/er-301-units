@@ -1,7 +1,7 @@
 local modulations = require "modulations.libmodulations"
 
 local Class = require "Base.Class"
-local Fader = require "Unit.ViewControl.Fader"
+local GainBias = require "Unit.ViewControl.GainBias"
 local Gate = require "Unit.ViewControl.Gate"
 local Unit = require "Unit"
 
@@ -24,6 +24,10 @@ function LogisticMapUnit:onLoadGraph(channelCount)
   connect(logisticMap, "Out", self, "Out1")
 
   self:addMonoBranch("clock", clockComparator, "In", clockComparator, "Out")
+
+  local r = self:addObject("r", app.ParameterAdapter())
+  tie(logisticMap, "R", r, "Out")
+  self:addMonoBranch("r", r, "In", r, "Out")
 
   if channelCount > 1 then
     connect(logisticMap, "Out", self, "Out2")
@@ -48,18 +52,18 @@ function LogisticMapUnit:onLoadViews(objects, branches)
     button = "clock",
     description = "Clock Input",
     branch = branches.clock,
-    comparator = objects.clockComparator
+    comparator = objects.clockComparator,
   }
 
-  controls.r = Fader {
+  controls.r = GainBias {
     button = "r",
     description = "Logistic Map r parameter",
-    param = objects.logisticMap:getParameter("R"),
-    monitor = self,
-    map = map,
-    precision = 8,
-    initial = 3.55309,
-    units = app.unitNone
+    branch = branches.r,
+    gainbias = objects.r,
+    range = objects.r,
+    biasUnits = app.unitNone,
+    biasMap = map,
+    initialBias = 3.55309,
   }
 
   return controls, views
