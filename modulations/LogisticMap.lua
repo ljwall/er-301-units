@@ -57,13 +57,13 @@ function LogisticMapUnit:onLoadViews(objects, branches)
 
   controls.r = GainBias {
     button = "r",
-    description = "Logistic Map r parameter",
+    description = "r parameter",
     branch = branches.r,
     gainbias = objects.r,
     range = objects.r,
     biasUnits = app.unitNone,
     biasMap = map,
-    initialBias = 3.55309,
+    initialBias = 3.95,
   }
 
   return controls, views

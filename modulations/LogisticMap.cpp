@@ -1,7 +1,6 @@
 #include "LogisticMap.h"
 #include <od/config.h>
 #include <hal/ops.h>
-#include <hal/log.h>
 
 LogisticMap::LogisticMap()
 {
@@ -27,6 +26,12 @@ void LogisticMap::process()
     {
       r = CLAMP(0, 4, mR.target());
       x = CLAMP(0, 1, r * x * (1 - x));
+
+      // prevent it locking up
+      if (x == 0)
+      {
+        x = 0.00001f;
+      }
     }
 
     out[i] = x;
