@@ -10,7 +10,8 @@
 
 // Add header files necessary for compilation of the interfaces added further down.
 #include <LogisticMap.h>
-	
+#include <Lorenz.h>
+
 #define SWIGLUA
 
 %}
@@ -20,3 +21,4 @@
 // Code bracked by #ifndef SWIGLUA will be ignored here.
 
 %include <LogisticMap.h>
+%include <Lorenz.h>
