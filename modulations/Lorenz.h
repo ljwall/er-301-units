@@ -2,6 +2,11 @@
 
 #include <od/objects/Object.h>
 
+// Output variable choices
+#define LORENZ_OUT_X 1
+#define LORENZ_OUT_Y 2
+#define LORENZ_OUT_Z 3
+
 class Lorenz : public od::Object
 {
 public:
@@ -16,6 +21,7 @@ public:
   od::Parameter mRho{"Rho"};
   od::Parameter mSigma{"Sigma"};
   od::Parameter mBeta{"Beta"};
+  od::Option mOutVar{"OutVar", LORENZ_OUT_X};
 #endif
 
 protected:

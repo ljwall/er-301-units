@@ -3,6 +3,7 @@ local modulations = require "modulations.libmodulations"
 local Class = require "Base.Class"
 local Encoder = require "Encoder"
 local GainBias = require "Unit.ViewControl.GainBias"
+local OptionControl = require "Unit.ViewControl.OptionControl"
 local Unit = require "Unit"
 
 local Lorenz = Class {}
@@ -15,7 +16,7 @@ function Lorenz:init(args)
 end
 
 function Lorenz:onLoadGraph(channelCount)
-  local lorenz = self:addObject("logisticMap", modulations.Lorenz())
+  local lorenz = self:addObject("lorenz", modulations.Lorenz())
   local rate = self:addObject("rate", app.ParameterAdapter())
   local rho = self:addObject("rho", app.ParameterAdapter())
   local sigma = self:addObject("sigma", app.ParameterAdapter())
@@ -46,6 +47,7 @@ local views = {
     "rho",
     "sigma",
     "beta",
+    "outvar",
   },
   collapsed = {}
 }
@@ -101,6 +103,18 @@ function Lorenz:onLoadViews(objects, branches)
     biasUnits = app.unitNone,
     biasMap = map10,
     initialBias = 8/3,
+  }
+
+  controls.outvar = OptionControl {
+    button = "OutVar",
+    description = "Output Var",
+    option = objects.lorenz:getOption("OutVar"),
+    choices = {
+      "x",
+      "y",
+      "z"
+    },
+    muteOnChange = true
   }
 
   return controls, views
