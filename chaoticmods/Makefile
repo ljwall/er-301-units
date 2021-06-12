@@ -21,9 +21,9 @@
 # rather than auto-generated.
 
 # Override these defaults on the commandline:
-PKGNAME ?= modulations
+PKGNAME ?= chaoticmods
 PKGVERSION ?= 0.0.1
-LIBNAME ?= libmodulations
+LIBNAME ?= libchaoticmods
 PROFILE ?= testing
 SDKPATH ?= ../er-301
 

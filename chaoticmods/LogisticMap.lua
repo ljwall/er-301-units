@@ -1,4 +1,4 @@
-local modulations = require "modulations.libmodulations"
+local chaos = require "chaoticmods.libchaoticmods"
 
 local Class = require "Base.Class"
 local GainBias = require "Unit.ViewControl.GainBias"
@@ -18,7 +18,7 @@ function LogisticMapUnit:onLoadGraph(channelCount)
   local clockComparator = self:addObject("clockComparator", app.Comparator())
   clockComparator:setTriggerMode()
 
-  local logisticMap = self:addObject("logisticMap", modulations.LogisticMap())
+  local logisticMap = self:addObject("logisticMap", chaos.LogisticMap())
 
   connect(clockComparator, "Out", logisticMap, "Trigger")
   connect(logisticMap, "Out", self, "Out1")

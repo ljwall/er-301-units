@@ -1,4 +1,4 @@
-local modulations = require "modulations.libmodulations"
+local chaos = require "chaoticmods.libchaoticmods"
 
 local Class = require "Base.Class"
 local Encoder = require "Encoder"
@@ -16,7 +16,7 @@ function Lorenz:init(args)
 end
 
 function Lorenz:onLoadGraph(channelCount)
-  local lorenz = self:addObject("lorenz", modulations.Lorenz())
+  local lorenz = self:addObject("lorenz", chaos.Lorenz())
   local rate = self:addObject("rate", app.ParameterAdapter())
   local rho = self:addObject("rho", app.ParameterAdapter())
   local sigma = self:addObject("sigma", app.ParameterAdapter())
