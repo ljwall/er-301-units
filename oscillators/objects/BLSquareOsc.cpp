@@ -19,6 +19,7 @@ BLSquareOsc::BLSquareOsc()
 
 BLSquareOsc::~BLSquareOsc()
 {
+  delete blit;
 }
 
 void BLSquareOsc::process()
