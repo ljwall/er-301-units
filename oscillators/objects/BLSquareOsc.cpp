@@ -1,4 +1,6 @@
 #include <od/config.h>
+#include <hal/ops.h>
+#include <math.h>
 
 #include "BLSquareOsc.h"
 #include "../lib/bli.h"
@@ -10,6 +12,9 @@ BLSquareOsc::BLSquareOsc()
 {
   blit = new ljw::Blit(ljw::Bli::bli, BLI_LEN, BLI_OVERSAMPLE);
   addOutput(mOutput);
+  addInput(mVoltPerOctave);
+  addInput(mFundamental);
+  addInput(mPulseWidth);
 }
 
 BLSquareOsc::~BLSquareOsc()
@@ -18,26 +23,30 @@ BLSquareOsc::~BLSquareOsc()
 
 void BLSquareOsc::process()
 {
-  float *out = mOutput.buffer();
+  float glog2 = FULLSCALE_IN_VOLTS * logf(2.0f);
+  float *out = mOutput.buffer(),
+        *vPerOct = mVoltPerOctave.buffer(),
+        *pw = mPulseWidth.buffer(),
+        *fund = mFundamental.buffer();
 
-  float step = 27*globalConfig.samplePeriod;
+  float step;
   float incSaw, nextSaw, x;
-  float pw = 0.5;
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
+    step = fund[i]*exp(CLAMP(-1.0, 1.0, vPerOct[i])*glog2)*globalConfig.samplePeriod;
     incSaw = aliasSaw + step;
     nextSaw = incSaw;
     while (nextSaw >=1) nextSaw = nextSaw - 1;
 
-    if (incSaw > pw && !high)
+    if (incSaw > pw[i] && !high)
     {
       // Go high
-      blit->addImpulse((incSaw - pw)/step, 1.0);
+      blit->addImpulse((incSaw - pw[i])/step, 1.0);
       high = true;
     }
 
-    if (nextSaw < pw && high)
+    if (nextSaw < pw[i] && high)
     {
       // go low
       blit->addImpulse(nextSaw / step, -1.0);
