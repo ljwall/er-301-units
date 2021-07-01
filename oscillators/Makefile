@@ -21,7 +21,7 @@
 # rather than auto-generated.
 
 # Override these defaults on the commandline:
-PKGNAME ?= bloscillators
+PKGNAME ?= band_limited_osc
 PKGVERSION ?= 0.0.1
 LIBNAME ?= libbloscillators
 PROFILE ?= testing

@@ -1,4 +1,4 @@
-local blOsc = require "bloscillators.libbloscillators"
+local blOsc = require "band_limited_osc.libbloscillators"
 local Class = require "Base.Class"
 local Unit = require "Unit"
 local Pitch = require "Unit.ViewControl.Pitch"
@@ -10,7 +10,7 @@ local BLSquareOscUnit = Class {}
 BLSquareOscUnit:include(Unit)
 
 function BLSquareOscUnit:init(args)
-  args.title = "BL Square"
+  args.title = "Band Limited Square"
   args.mnemonic = "SQ"
   Unit.init(self, args)
 end
