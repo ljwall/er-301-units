@@ -1,6 +1,6 @@
 #pragma once
 
-#define BLIT_MAX_SIM 32
+#define BLIT_MAX_SIM 33
 
 namespace ljw
 {

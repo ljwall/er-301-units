@@ -6,7 +6,8 @@
 #include "../lib/bli.h"
 #include "../lib/blit.h"
 
-#define R 0.9997
+#define R 0.9997f
+#define PULSE_SIZE 0.75f
 
 BLSquareOsc::BLSquareOsc()
 {
@@ -29,13 +30,12 @@ void BLSquareOsc::process()
         *vPerOct = mVoltPerOctave.buffer(),
         *pw = mPulseWidth.buffer(),
         *fund = mFundamental.buffer();
-
   float step;
   float incSaw, nextSaw, x;
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
-    step = fund[i]*exp(CLAMP(-1.0, 1.0, vPerOct[i])*glog2)*globalConfig.samplePeriod;
+    step = CLAMP(0, 20000, fund[i]*exp(vPerOct[i]*glog2))*globalConfig.samplePeriod;
     incSaw = aliasSaw + step;
     nextSaw = incSaw;
     while (nextSaw >=1) nextSaw = nextSaw - 1;
@@ -43,24 +43,31 @@ void BLSquareOsc::process()
     if (incSaw > pw[i] && !high)
     {
       // Go high
-      blit->addImpulse((incSaw - pw[i])/step, 1.0);
+      blit->addImpulse((incSaw - pw[i])/step, PULSE_SIZE);
       high = true;
     }
 
-    if (nextSaw < pw[i] && high)
+    if (nextSaw < incSaw && high)
     {
       // go low
-      blit->addImpulse(nextSaw / step, -1.0);
+      blit->addImpulse(nextSaw / step, -PULSE_SIZE);
       high = false;
+    }
+
+    if (nextSaw > pw[i] && !high)
+    {
+      // Go high again
+      blit->addImpulse((nextSaw - pw[i])/step, PULSE_SIZE);
+      high = true;
     }
 
     x = blit->next();
 
     // Lossy running integration
-    out[i] = x + R*(i > 0 ? out[i-1] : last);
+    last = out[i] = x + R*last;
 
     aliasSaw = nextSaw;
   }
 
-  last = out[FRAMELENGTH - 1];
+  //last = out[FRAMELENGTH - 1];
 }

@@ -37,7 +37,7 @@ def windowed_bl_impulse(over_sampling, crossings):
 
 
 if __name__ == '__main__':
-    data = windowed_bl_impulse(256, 16)
+    data = windowed_bl_impulse(256, 4)
     plt.plot(data)
     plt.show()
     N = len(data)

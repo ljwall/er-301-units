@@ -1,4 +1,5 @@
 #include "blit.h"
+#include <hal/log.h>
 
 
 namespace ljw
@@ -22,9 +23,10 @@ namespace ljw
         pulses[i].position = (int)(time * bli_oversample);
         pulses[i].value = value;
         pulses_count++;
-        break;
+        return;
       }
     }
+    logError("Unable to keep track of impulses");
   }
 
   float Blit::next()

@@ -1,5 +1,5 @@
 #pragma once
-#define BLI_LEN 8192
+#define BLI_LEN 2048
 #define BLI_OVERSAMPLE 256
 
 namespace ljw
