@@ -3,6 +3,7 @@ local Class = require "Base.Class"
 local Unit = require "Unit"
 local Pitch = require "Unit.ViewControl.Pitch"
 local GainBias = require "Unit.ViewControl.GainBias"
+local Gate = require "Unit.ViewControl.Gate"
 local Encoder = require "Encoder"
 
 local BLSquareOscUnit = Class {}
@@ -22,6 +23,10 @@ function BLSquareOscUnit:onLoadGraph(channelCount)
   local f0Range = self:addObject("f0Range", app.MinMax())
   local pw = self:addObject("pw", app.GainBias())
   local pwRange = self:addObject("pwRange", app.MinMax())
+  local sync = self:addObject("sync", app.Comparator())
+  sync:setTriggerMode()
+
+  connect(sync, "Out", osc, "HardSync")
 
   connect(tune, "Out", tuneRange, "In")
   connect(tune, "Out", osc, "V/Oct")
@@ -40,12 +45,14 @@ function BLSquareOscUnit:onLoadGraph(channelCount)
   self:addMonoBranch("tune", tune, "In", tune, "Out")
   self:addMonoBranch("f0", f0, "In", f0, "Out")
   self:addMonoBranch("pw", pw, "In", pw, "Out")
+  self:addMonoBranch("sync", sync, "In", sync, "Out")
 end
 
 local views = {
   expanded = {
     "tune",
     "freq",
+    "sync",
     "pw"
   },
   collapsed = {},
@@ -73,6 +80,13 @@ function BLSquareOscUnit:onLoadViews(objects, branches)
     initialBias = 27.5,
     gainMap = Encoder.getMap("freqGain"),
     scaling = app.octaveScaling
+  }
+
+  controls.sync = Gate {
+    button = "sync",
+    description = "Hard Sync",
+    branch = branches.sync,
+    comparator = objects.sync
   }
 
   controls.pw = GainBias {

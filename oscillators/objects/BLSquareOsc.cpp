@@ -16,6 +16,7 @@ BLSquareOsc::BLSquareOsc()
   addInput(mVoltPerOctave);
   addInput(mFundamental);
   addInput(mPulseWidth);
+  addInput(mHardSync);
 }
 
 BLSquareOsc::~BLSquareOsc()
@@ -29,7 +30,9 @@ void BLSquareOsc::process()
   float *out = mOutput.buffer(),
         *vPerOct = mVoltPerOctave.buffer(),
         *pw = mPulseWidth.buffer(),
-        *fund = mFundamental.buffer();
+        *fund = mFundamental.buffer(),
+        *sync = mHardSync.buffer();
+
   float step;
   float incSaw, nextSaw, x;
 
@@ -37,8 +40,15 @@ void BLSquareOsc::process()
   {
     step = CLAMP(0, 20000, fund[i]*exp(vPerOct[i]*glog2))*globalConfig.samplePeriod;
     incSaw = aliasSaw + step;
-    nextSaw = incSaw;
-    while (nextSaw >=1) nextSaw = nextSaw - 1;
+    if (sync[i] == 0.0f)
+    {
+      nextSaw = incSaw;
+      while (nextSaw >=1) nextSaw = nextSaw - 1;
+    }
+    else
+    {
+      nextSaw = 0;
+    }
 
     if (incSaw > pw[i] && !high)
     {
