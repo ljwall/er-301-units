@@ -3,7 +3,6 @@
 #include <math.h>
 
 #include "BLSquareOsc.h"
-#include "../lib/bli.h"
 #include "../lib/blit.h"
 
 #define R 0.9997f
@@ -11,7 +10,7 @@
 
 BLSquareOsc::BLSquareOsc()
 {
-  blit = new ljw::Blit(ljw::Bli::bli, BLI_LEN, BLI_OVERSAMPLE);
+  blit = new ljw::Blit();
   addOutput(mOutput);
   addInput(mVoltPerOctave);
   addInput(mFundamental);
