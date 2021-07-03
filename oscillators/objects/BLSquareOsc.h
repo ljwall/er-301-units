@@ -17,7 +17,6 @@ class BLSquareOsc : public od::Object
     od::Inlet mVoltPerOctave{"V/Oct"};
     od::Inlet mFundamental{"Fundamental"};
     od::Inlet mPulseWidth{"PulseWidth"};
-    od::Inlet mHardSync{"HardSync"};
 #endif
 
   protected:
