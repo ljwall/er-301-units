@@ -7,9 +7,14 @@
 namespace ljw
 {
   float Bli::bli[BLI_LEN];
+  bool Bli::made = false;
 
   void Bli::make()
   {
+    if (made)
+      return;
+    made = true;
+
     double sinc, x, blackman, t,
            TwoPi = 2.0*M_PI,
            FourPi = 4.0*M_PI;

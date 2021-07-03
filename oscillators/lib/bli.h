@@ -11,6 +11,8 @@ namespace ljw
   {
     public:
       static float bli[BLI_LEN];
+      static bool made;
+
       static void make();
   };
 }
