@@ -3,23 +3,29 @@
 #include <math.h>
 
 #include "BLSquareOsc.h"
-#include "../lib/blit.h"
-
-#define R 0.9997f
-#define PULSE_SIZE 0.75f
+#include "../lib/bli.h"
 
 BLSquareOsc::BLSquareOsc()
 {
-  blit = new ljw::Blit();
+  ljw::Bli::make();
   addOutput(mOutput);
   addInput(mVoltPerOctave);
   addInput(mFundamental);
   addInput(mPulseWidth);
+
+  idx_play = 0;
+  idx_work = BLI_CROSSINGS;
+  naive_saw = 0.0f;
+
+  for (int i=0; i<BLSQR_BUFF_LEN; i++)
+  {
+    naive_sqr[i] = -0.5f;
+    corrections[i] = 0.0f;
+  }
 }
 
 BLSquareOsc::~BLSquareOsc()
 {
-  delete blit;
 }
 
 void BLSquareOsc::process()
@@ -30,44 +36,60 @@ void BLSquareOsc::process()
         *pw = mPulseWidth.buffer(),
         *fund = mFundamental.buffer();
 
-  float step;
-  float incSaw, nextSaw, x;
+  float step, last, incSaw;
+  int j, sample_pos;
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
     step = CLAMP(0, 20000, fund[i]*exp(vPerOct[i]*glog2))*globalConfig.samplePeriod;
-    incSaw = aliasSaw + step;
-    nextSaw = incSaw;
-    while (nextSaw >=1) nextSaw = nextSaw - 1;
+    last = naive_saw;
+    incSaw = last + step;
+    naive_saw = incSaw;
+    if (naive_saw >=1) naive_saw -= 1;
+
+    naive_sqr[idx_play] = 0.0f;
+    corrections[idx_play] = 0.0f;
+
+    idx_work = (idx_work + 1) % BLSQR_BUFF_LEN;
+    idx_play = (idx_play + 1) % BLSQR_BUFF_LEN;
 
     if (incSaw > pw[i] && !high)
     {
       // Go high
-      blit->addImpulse((incSaw - pw[i])/step, PULSE_SIZE);
+      sample_pos = (int)((incSaw - pw[i])*((float)BLI_OVERSAMPLE)/step);
+      for (j=0; j<BLI_CROSSINGS*2; j++)
+      {
+        corrections[(idx_play + j) % BLSQR_BUFF_LEN] += ljw::Bli::step_corrections[sample_pos];
+        sample_pos += BLI_OVERSAMPLE;
+      }
       high = true;
     }
 
-    if (nextSaw < incSaw && high)
+    if (naive_saw < incSaw && high)
     {
       // go low
-      blit->addImpulse(nextSaw / step, -PULSE_SIZE);
+      sample_pos = (int)(naive_saw*((float)BLI_OVERSAMPLE)/step);
+      for (j=0; j<BLI_CROSSINGS*2; j++)
+      {
+        corrections[(idx_play + j) % BLSQR_BUFF_LEN] -= ljw::Bli::step_corrections[sample_pos];
+        sample_pos += BLI_OVERSAMPLE;
+      }
       high = false;
     }
 
-    if (nextSaw > pw[i] && !high)
+    if (naive_saw > pw[i] && !high)
     {
       // Go high again
-      blit->addImpulse((nextSaw - pw[i])/step, PULSE_SIZE);
+      sample_pos = (int)((naive_saw - pw[i])*((float)BLI_OVERSAMPLE)/step);
+      for (j=0; j<BLI_CROSSINGS*2; j++)
+      {
+        corrections[(idx_play + j) % BLSQR_BUFF_LEN] += ljw::Bli::step_corrections[sample_pos];
+        sample_pos += BLI_OVERSAMPLE;
+      }
       high = true;
     }
 
-    x = blit->next();
-
-    // Lossy running integration
-    last = out[i] = x + R*last;
-
-    aliasSaw = nextSaw;
+    naive_sqr[idx_work] = naive_saw > pw[i] ? 0.5f : -0.5f;
+    out[i] = naive_sqr[idx_play] + corrections[idx_play];
   }
-
-  //last = out[FRAMELENGTH - 1];
 }

@@ -1,7 +1,9 @@
 #pragma once
 
 #include <od/objects/Object.h>
-#include "../lib/blit.h"
+#include "../lib/bli.h"
+
+#define BLSQR_BUFF_LEN  (BLI_LEN * 2)
 
 class BLSquareOsc : public od::Object
 {
@@ -20,7 +22,9 @@ class BLSquareOsc : public od::Object
 #endif
 
   protected:
-    ljw::Blit* blit;
-    float aliasSaw = 0, last = 0;
+    float naive_saw;
+    float naive_sqr[BLSQR_BUFF_LEN];
+    float corrections[BLSQR_BUFF_LEN];
+    int idx_work, idx_play;
     bool high = false;
 };
