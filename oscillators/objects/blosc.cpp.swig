@@ -10,6 +10,7 @@
 
 // Add header files necessary for compilation of the interfaces added further down.
 #include <BLSquareOsc.h>
+#include <BLSawOsc.h>
 
 #define SWIGLUA
 
@@ -20,3 +21,4 @@
 // Code bracked by #ifndef SWIGLUA will be ignored here.
 
 %include <BLSquareOsc.h>
+%include <BLSawOsc.h>

@@ -9,5 +9,11 @@ return {
       moduleName = "SquareOsc",
       category = "Oscillators",
     },
+    {
+      -- Title and category control how this unit appears in the unit browser.
+      title = "Saw",
+      moduleName = "SawOsc",
+      category = "Oscillators",
+    },
   }
 }
