@@ -27,4 +27,5 @@ class BLSquareOsc : public od::Object
     float corrections[BLSQR_BUFF_LEN];
     int idx_work, idx_play;
     bool high = false;
+    float last_pw = 0.5f;
 };
