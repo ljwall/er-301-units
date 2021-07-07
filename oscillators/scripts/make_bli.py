@@ -5,6 +5,9 @@ import math
 import numpy as np
 from scipy import signal
 
+CROSSINGS = 16
+OVER_SAMPLE = 256
+
 
 @np.vectorize
 def sinc(x):
@@ -37,12 +40,25 @@ def windowed_bl_impulse(over_sampling, crossings):
 
 
 if __name__ == '__main__':
-    data = windowed_bl_impulse(512, 16)
+    data = windowed_bl_impulse(OVER_SAMPLE, CROSSINGS)
+    step = signal.lfilter([1/OVER_SAMPLE], [1, -1], data)
+    # Ensure really well normaled to one
+    step_size = step[len(step) - 1]
+    step /= step_size
+
+    step -= np.concatenate((np.zeros(int(len(step)/2)), np.ones(int(len(step)/2))))
+
     plt.plot(data)
+    plt.plot(step)
+
     plt.show()
     N = len(data)
     print('namespace ljw\n{')
     print(f'  float bli[{N}] = {{', end='')
     for x in data:
+      print(f'{x:.9f},', end='')
+    print('};\n')
+    print(f'  float step_corrections[{N}] = {{', end='')
+    for x in step:
       print(f'{x:.9f},', end='')
     print('};\n}')

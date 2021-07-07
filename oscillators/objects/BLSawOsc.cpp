@@ -36,7 +36,7 @@ void BLSawOsc::process()
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
-    step = CLAMP(0, 20000, fund[i]*exp(vPerOct[i]*glog2))*globalConfig.samplePeriod;
+    step = CLAMP(1, 20000, fund[i]*exp(vPerOct[i]*glog2))*globalConfig.samplePeriod;
     last = naive_saw[idx_work];
 
     naive_saw[idx_play] = 0.0f;
