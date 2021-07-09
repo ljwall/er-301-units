@@ -16,8 +16,6 @@ function BLSawOscUnit:init(args)
 end
 
 function BLSawOscUnit:onLoadGraph(channelCount)
-  print("HELLO")
-  print(blOsc.BLSawOsc)
   local osc = self:addObject("osc", blOsc.BLSawOsc())
   local tune = self:addObject("tune", app.ConstantOffset())
   local tuneRange = self:addObject("tuneRange", app.MinMax())
