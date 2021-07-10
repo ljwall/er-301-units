@@ -8,7 +8,6 @@
 
 BLSquareOsc::BLSquareOsc()
 {
-  ljw::Bli::make();
   addOutput(mOutput);
   addInput(mVoltPerOctave);
   addInput(mFundamental);

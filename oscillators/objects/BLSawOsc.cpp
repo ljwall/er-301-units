@@ -1,5 +1,6 @@
 #include <od/config.h>
 #include <hal/ops.h>
+#include <hal/simd.h>
 #include <math.h>
 
 #include "BLSawOsc.h"
@@ -7,17 +8,14 @@
 
 BLSawOsc::BLSawOsc()
 {
-  ljw::Bli::make();
   addOutput(mOutput);
   addInput(mVoltPerOctave);
   addInput(mFundamental);
   idx_play = 0;
   idx_work = BLI_CROSSINGS;
 
-  for (int i=0; i<BLS_BUFF_LEN; i++)
-  {
-    naive_saw[i] = corrections[i] = 0.0f;
-  }
+  simd_set(naive_saw, BLS_BUFF_LEN, 0.0f);
+  simd_set(corrections, BLS_BUFF_LEN, 0.0f);
 }
 
 BLSawOsc::~BLSawOsc()

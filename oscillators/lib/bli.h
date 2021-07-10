@@ -12,8 +12,5 @@ namespace ljw
   {
     public:
       static float step_corrections[BLI_LEN];
-      static bool made;
-
-      static void make();
   };
 }
