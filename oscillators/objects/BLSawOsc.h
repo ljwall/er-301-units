@@ -24,4 +24,6 @@ class BLSawOsc : public od::Object
     float naive_saw[BLS_BUFF_LEN];
     float corrections[BLS_BUFF_LEN];
     int idx_work, idx_play;
+
+    void applyStep(float value, float position);
 };

@@ -30,7 +30,6 @@ void BLSawOsc::process()
         *fund = mFundamental.buffer();
 
   float step, last;
-  int j, sample_pos;
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
@@ -47,16 +46,21 @@ void BLSawOsc::process()
 
     if (naive_saw[idx_work] >= 0.5f)
     {
-      sample_pos = (int)((naive_saw[idx_work] - 0.5f)*((float)BLI_OVERSAMPLE)/step);
-      for (j=0; j<BLI_CROSSINGS*2; j++)
-      {
-        corrections[(idx_play + j) % BLS_BUFF_LEN] -= ljw::Bli::step_corrections[sample_pos];
-        sample_pos += BLI_OVERSAMPLE;
-      }
-
-      naive_saw[idx_work] -= 1;
+      applyStep(-1.0f, (naive_saw[idx_work] - 0.5f)/step);
     }
 
     out[i] = naive_saw[idx_play] + corrections[idx_play];
   }
+}
+
+void BLSawOsc::applyStep(float value, float position)
+{
+    int sample_pos = (int)(position*((float)BLI_OVERSAMPLE));
+    for (int j=0; j<BLI_CROSSINGS*2; j++)
+    {
+      corrections[(idx_play + j) % BLS_BUFF_LEN] += value*ljw::Bli::step_corrections[sample_pos];
+      sample_pos += BLI_OVERSAMPLE;
+    }
+
+    naive_saw[idx_work] += value;
 }
