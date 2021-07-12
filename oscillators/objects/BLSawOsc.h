@@ -18,12 +18,14 @@ class BLSawOsc : public od::Object
 
     od::Inlet mVoltPerOctave{"V/Oct"};
     od::Inlet mFundamental{"Fundamental"};
+    od::Inlet mSync{"Sync"};
 #endif
 
   protected:
     float naive_saw[BLS_BUFF_LEN];
     float corrections[BLS_BUFF_LEN];
+    float lastSync = 0.0f;
     int idx_work, idx_play;
 
-    void applyStep(float value, float position);
+    void applyJump(float value, float position);
 };

@@ -22,6 +22,11 @@ function BLSawOscUnit:onLoadGraph(channelCount)
   local f0 = self:addObject("f0", app.GainBias())
   local f0Range = self:addObject("f0Range", app.MinMax())
 
+  local sync = self:addObject("sync", app.GainBias())
+  local syncRange = self:addObject("syncRange", app.MinMax())
+  connect(sync, "Out", osc, "Sync")
+  connect(sync, "Out", syncRange, "In")
+
   connect(tune, "Out", tuneRange, "In")
   connect(tune, "Out", osc, "V/Oct")
 
@@ -35,12 +40,14 @@ function BLSawOscUnit:onLoadGraph(channelCount)
 
   self:addMonoBranch("tune", tune, "In", tune, "Out")
   self:addMonoBranch("f0", f0, "In", f0, "Out")
+  self:addMonoBranch("sync", sync, "In", sync, "Out")
 end
 
 local views = {
   expanded = {
     "tune",
     "freq",
+    'sync',
   },
   collapsed = {},
 }
@@ -67,6 +74,19 @@ function BLSawOscUnit:onLoadViews(objects, branches)
     initialBias = 27.5,
     gainMap = Encoder.getMap("freqGain"),
     scaling = app.octaveScaling
+  }
+
+  controls.sync = GainBias {
+    button = "Sync",
+    description = "Sync",
+    branch = branches.sync,
+    gainbias = objects.sync,
+    range = objects.syncRange,
+    -- biasMap = Encoder.getMap("oscFreq"),
+    -- biasUnits = app.unitHertz,
+    initialBias = 0.0,
+    -- gainMap = Encoder.getMap("freqGain"),
+    -- scaling = app.octaveScaling
   }
 
   return controls, views

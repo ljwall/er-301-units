@@ -22,7 +22,7 @@
 
 # Override these defaults on the commandline:
 PKGNAME ?= band_limited_osc
-PKGVERSION ?= 0.0.1
+PKGVERSION ?= 0.0.2
 LIBNAME ?= libbloscillators
 PROFILE ?= testing
 SDKPATH ?= ../er-301

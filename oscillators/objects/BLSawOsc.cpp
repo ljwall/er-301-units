@@ -11,6 +11,8 @@ BLSawOsc::BLSawOsc()
   addOutput(mOutput);
   addInput(mVoltPerOctave);
   addInput(mFundamental);
+  addInput(mSync);
+
   idx_play = 0;
   idx_work = BLI_CROSSINGS;
 
@@ -26,10 +28,11 @@ void BLSawOsc::process()
 {
   float glog2 = FULLSCALE_IN_VOLTS * logf(2.0f);
   float *out = mOutput.buffer(),
+        *sync = mSync.buffer(),
         *vPerOct = mVoltPerOctave.buffer(),
         *fund = mFundamental.buffer();
 
-  float step, last;
+  float step, last, syncFraction, resetFraction;
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
@@ -43,17 +46,36 @@ void BLSawOsc::process()
     idx_play = (idx_play + 1) % BLS_BUFF_LEN;
 
     naive_saw[idx_work] = last + step;
+    resetFraction = (naive_saw[idx_work] - 0.5f) / step;
 
-    if (naive_saw[idx_work] >= 0.5f)
+    if (sync[i] > 0 && lastSync <=0)
     {
-      applyStep(-1.0f, (naive_saw[idx_work] - 0.5f)/step);
+      syncFraction = sync[i] / (sync[i] - lastSync);
+
+      if (resetFraction > syncFraction)
+      {
+        // Do a reset and _then_ a sync
+        applyJump(-1.0f, resetFraction);
+        applyJump(-step*(resetFraction - syncFraction), syncFraction);
+      }
+      else
+      {
+        // Sync is comming first, reset (if it was expected) redundant
+        applyJump(-(0.5f + last + step*(1.0f - syncFraction)), syncFraction);
+      }
+
+    }
+    else if (resetFraction >= 0.0f)
+    {
+      applyJump(-1.0f, resetFraction);
     }
 
+    lastSync = sync[i];
     out[i] = naive_saw[idx_play] + corrections[idx_play];
   }
 }
 
-void BLSawOsc::applyStep(float value, float position)
+void BLSawOsc::applyJump(float value, float position)
 {
     int sample_pos = (int)(position*((float)BLI_OVERSAMPLE));
     for (int j=0; j<BLI_CROSSINGS*2; j++)
