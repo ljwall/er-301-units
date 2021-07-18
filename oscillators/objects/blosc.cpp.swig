@@ -11,6 +11,7 @@
 // Add header files necessary for compilation of the interfaces added further down.
 #include <BLSquareOsc.h>
 #include <BLSawOsc.h>
+#include <DCBlock.h>
 
 #define SWIGLUA
 
@@ -22,3 +23,4 @@
 
 %include <BLSquareOsc.h>
 %include <BLSawOsc.h>
+%include <DCBlock.h>

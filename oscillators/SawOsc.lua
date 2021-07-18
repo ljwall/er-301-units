@@ -5,6 +5,8 @@ local Pitch = require "Unit.ViewControl.Pitch"
 local GainBias = require "Unit.ViewControl.GainBias"
 local Gate = require "Unit.ViewControl.Gate"
 local Encoder = require "Encoder"
+local NoddySync = require "band_limited_osc.NoddySync"
+-- local libcore = require "core.libcore"
 
 local BLSawOscUnit = Class {}
 BLSawOscUnit:include(Unit)
@@ -24,6 +26,14 @@ function BLSawOscUnit:onLoadGraph(channelCount)
 
   local sync = self:addObject("sync", app.GainBias())
   local syncRange = self:addObject("syncRange", app.MinMax())
+
+  local syncMonitor = self:addObject("syncMonitor", app.Comparator())
+  syncMonitor:setTriggerMode()
+  -- local highpass = self:addObject("highpass", libcore.FixedFilter(2))
+  local highpass = self:addObject("highpass", blOsc.DCBlock())
+
+  connect(highpass, "Out", syncMonitor, "In")
+
   connect(sync, "Out", osc, "Sync")
   connect(sync, "Out", syncRange, "In")
 
@@ -41,6 +51,8 @@ function BLSawOscUnit:onLoadGraph(channelCount)
   self:addMonoBranch("tune", tune, "In", tune, "Out")
   self:addMonoBranch("f0", f0, "In", f0, "Out")
   self:addMonoBranch("sync", sync, "In", sync, "Out")
+
+  self:addMonoBranch("sync2", highpass, "In", highpass, "Out")
 end
 
 local views = {
@@ -48,6 +60,7 @@ local views = {
     "tune",
     "freq",
     'sync',
+    'sync2',
   },
   collapsed = {},
 }
@@ -87,6 +100,13 @@ function BLSawOscUnit:onLoadViews(objects, branches)
     initialBias = 0.0,
     -- gainMap = Encoder.getMap("freqGain"),
     -- scaling = app.octaveScaling
+  }
+
+  controls.sync2 = NoddySync {
+    button = "Sync",
+    description = "Sync",
+    branch = branches.sync2,
+    comparator = objects.syncMonitor
   }
 
   return controls, views
