@@ -1,11 +1,10 @@
 #pragma once
 
 #include <od/objects/Object.h>
-#include "../lib/bli.h"
-
-#define BLSQR_BUFF_LEN  (BLI_LEN * 2)
+#include "OscBase.h"
 
 class BLSquareOsc : public od::Object
+                  , public OscBase
 {
   public:
     BLSquareOsc();
@@ -23,11 +22,6 @@ class BLSquareOsc : public od::Object
 
   protected:
     float naive_saw;
-    float naive_sqr[BLSQR_BUFF_LEN];
-    float corrections[BLSQR_BUFF_LEN];
-    int idx_work, idx_play;
     bool high = false;
     float last_pw = 0.5f;
-
-    void applyJump(float value, float position);
 };

@@ -1,11 +1,9 @@
 #include <od/config.h>
 #include <hal/ops.h>
 #include <hal/log.h>
-#include <hal/simd.h>
 #include <math.h>
 
 #include "BLSquareOsc.h"
-#include "../lib/bli.h"
 
 BLSquareOsc::BLSquareOsc()
 {
@@ -14,12 +12,7 @@ BLSquareOsc::BLSquareOsc()
   addInput(mFundamental);
   addInput(mPulseWidth);
 
-  idx_play = 0;
-  idx_work = BLI_CROSSINGS;
   naive_saw = 0.0f;
-
-  simd_set(naive_sqr, BLSQR_BUFF_LEN, -0.5f);
-  simd_set(corrections, BLSQR_BUFF_LEN, 0.0f);
 }
 
 BLSquareOsc::~BLSquareOsc()
@@ -44,11 +37,11 @@ void BLSquareOsc::process()
     naive_saw = incSaw;
     if (naive_saw >=1) naive_saw -= 1.0f;
 
-    naive_sqr[idx_play] = 0.0f;
+    naive_wave[idx_play] = 0.0f;
     corrections[idx_play] = 0.0f;
 
-    idx_work = (idx_work + 1) % BLSQR_BUFF_LEN;
-    idx_play = (idx_play + 1) % BLSQR_BUFF_LEN;
+    idx_work = (idx_work + 1) % CIRCULAR_BUFFER_LEN;
+    idx_play = (idx_play + 1) % CIRCULAR_BUFFER_LEN;
 
     if (incSaw >= pw[i] && !high)
     {
@@ -72,17 +65,7 @@ void BLSquareOsc::process()
     }
 
     last_pw = pw[i];
-    naive_sqr[idx_work] = high ? 0.5f : -0.5f;
-    out[i] = naive_sqr[idx_play] + corrections[idx_play];
+    naive_wave[idx_work] = high ? 0.5f : -0.5f;
+    out[i] = naive_wave[idx_play] + corrections[idx_play];
   }
-}
-
-void BLSquareOsc::applyJump(float value, float position)
-{
-    int sample_pos = (int)(position*((float)BLI_OVERSAMPLE));
-    for (int j=0; j<BLI_CROSSINGS*2; j++)
-    {
-      corrections[(idx_play + j) % BLSQR_BUFF_LEN] += value*ljw::Bli::step_corrections[sample_pos];
-      sample_pos += BLI_OVERSAMPLE;
-    }
 }

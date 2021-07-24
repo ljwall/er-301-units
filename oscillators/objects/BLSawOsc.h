@@ -1,11 +1,13 @@
 #pragma once
 
 #include <od/objects/Object.h>
-#include "../lib/bli.h"
 
-#define BLS_BUFF_LEN  (BLI_LEN * 2)
+#include "OscBase.h"
+
+//#define BLS_BUFF_LEN  (BLI_LEN * 2)
 
 class BLSawOsc : public od::Object
+               , public OscBase
 {
   public:
     BLSawOsc();
@@ -22,10 +24,5 @@ class BLSawOsc : public od::Object
 #endif
 
   protected:
-    float naive_saw[BLS_BUFF_LEN];
-    float corrections[BLS_BUFF_LEN];
     float lastSync = 0.0f;
-    int idx_work, idx_play;
-
-    void applyJump(float value, float position);
 };
