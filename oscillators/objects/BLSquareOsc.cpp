@@ -1,6 +1,7 @@
 #include <od/config.h>
 #include <hal/ops.h>
 #include <hal/log.h>
+#include <hal/simd.h>
 #include <math.h>
 
 #include "BLSquareOsc.h"
@@ -17,11 +18,8 @@ BLSquareOsc::BLSquareOsc()
   idx_work = BLI_CROSSINGS;
   naive_saw = 0.0f;
 
-  for (int i=0; i<BLSQR_BUFF_LEN; i++)
-  {
-    naive_sqr[i] = -0.5f;
-    corrections[i] = 0.0f;
-  }
+  simd_set(naive_sqr, BLSQR_BUFF_LEN, -0.5f);
+  simd_set(corrections, BLSQR_BUFF_LEN, 0.0f);
 }
 
 BLSquareOsc::~BLSquareOsc()
@@ -37,7 +35,6 @@ void BLSquareOsc::process()
         *fund = mFundamental.buffer();
 
   float step, last, incSaw;
-  int j, sample_pos;
 
   for (int i = 0; i < FRAMELENGTH; i++)
   {
@@ -56,36 +53,21 @@ void BLSquareOsc::process()
     if (incSaw >= pw[i] && !high)
     {
       // Go high
-      sample_pos = (int)((incSaw - pw[i])*((float)BLI_OVERSAMPLE)/(step - pw[i] + last_pw));
-      for (j=0; j<BLI_CROSSINGS*2; j++)
-      {
-        corrections[(idx_play + j) % BLSQR_BUFF_LEN] += ljw::Bli::step_corrections[sample_pos];
-        sample_pos += BLI_OVERSAMPLE;
-      }
+      applyJump(1.0f, (incSaw - pw[i])/(step - pw[i] + last_pw));
       high = true;
     }
 
     if (naive_saw < incSaw && high)
     {
       // go low
-      sample_pos = (int)(naive_saw*((float)BLI_OVERSAMPLE)/step);
-      for (j=0; j<BLI_CROSSINGS*2; j++)
-      {
-        corrections[(idx_play + j) % BLSQR_BUFF_LEN] -= ljw::Bli::step_corrections[sample_pos];
-        sample_pos += BLI_OVERSAMPLE;
-      }
+      applyJump(-1.0f, naive_saw/step);
       high = false;
     }
 
     if (naive_saw >= pw[i] && !high)
     {
       // Go high again
-      sample_pos = (int)((naive_saw - pw[i])*((float)BLI_OVERSAMPLE)/(step - pw[i] + last_pw));
-      for (j=0; j<BLI_CROSSINGS*2; j++)
-      {
-        corrections[(idx_play + j) % BLSQR_BUFF_LEN] += ljw::Bli::step_corrections[sample_pos];
-        sample_pos += BLI_OVERSAMPLE;
-      }
+      applyJump(1.0f, (naive_saw - pw[i])/(step - pw[i] + last_pw));
       high = true;
     }
 
@@ -93,4 +75,14 @@ void BLSquareOsc::process()
     naive_sqr[idx_work] = high ? 0.5f : -0.5f;
     out[i] = naive_sqr[idx_play] + corrections[idx_play];
   }
+}
+
+void BLSquareOsc::applyJump(float value, float position)
+{
+    int sample_pos = (int)(position*((float)BLI_OVERSAMPLE));
+    for (int j=0; j<BLI_CROSSINGS*2; j++)
+    {
+      corrections[(idx_play + j) % BLSQR_BUFF_LEN] += value*ljw::Bli::step_corrections[sample_pos];
+      sample_pos += BLI_OVERSAMPLE;
+    }
 }

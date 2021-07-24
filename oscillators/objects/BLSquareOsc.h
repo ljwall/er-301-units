@@ -28,4 +28,6 @@ class BLSquareOsc : public od::Object
     int idx_work, idx_play;
     bool high = false;
     float last_pw = 0.5f;
+
+    void applyJump(float value, float position);
 };
