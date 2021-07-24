@@ -4,7 +4,22 @@ local ViewControl = require "Unit.ViewControl"
 local ply = app.SECTION_PLY
 
 local col1 = app.BUTTON1_CENTER
+local col2 = app.BUTTON2_CENTER
+local col3 = app.BUTTON3_CENTER
+local line1 = app.GRID5_LINE1
 local line4 = app.GRID5_LINE4
+local center1 = app.GRID5_CENTER1
+local center3 = app.GRID5_CENTER3
+
+local descriptionCntr = 0.5 * (col2 + col3)
+
+local instructions = app.DrawingInstructions()
+instructions:hline(col1 + 20, col2 - 7, center3)
+instructions:box(col2 - 7, center3 - 8, 4, 16)
+instructions:fill(col2 + 1, center3 - 8, 4, 16)
+instructions:hline(col2 + 5, descriptionCntr, center3)
+instructions:vline(descriptionCntr, center3, line1 - 2)
+instructions:triangle(descriptionCntr, line1 - 2, 90, 3)
 
 local NoddySync = Class {}
 NoddySync:include(ViewControl)
@@ -40,11 +55,28 @@ function NoddySync:init(args)
   self.scope:setCornerRadius(3, 3, 3, 3)
   self.subGraphic:addChild(self.scope)
 
+  graphic = app.Drawing(0, 0, 128, 64)
+  graphic:add(instructions)
+  self.subGraphic:addChild(graphic)
+
+  graphic = app.Label("AC couple", 10)
+  graphic:fitToText(3)
+  graphic:setCenter(descriptionCntr - 5, center3 - 17)
+  self.subGraphic:addChild(graphic)
+
   graphic = app.SubButton("empty", 1)
   self.subGraphic:addChild(graphic)
   self.modButton = graphic
 
   branch:subscribe("contentChanged", self)
+
+  graphic = app.Label(description, 10)
+  graphic:fitToText(3)
+  graphic:setSize(ply * 2, graphic.mHeight)
+  graphic:setBorder(1)
+  graphic:setCornerRadius(3, 0, 0, 3)
+  graphic:setCenter(descriptionCntr, center1 + 1)
+  self.subGraphic:addChild(graphic)
 end
 
 function NoddySync:onRemove()
