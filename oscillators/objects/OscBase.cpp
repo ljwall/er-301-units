@@ -16,10 +16,10 @@ OscBase::~OscBase()
 
 void OscBase::applyJump(float value, float position)
 {
-    int sample_pos = (int)(position*((float)BLI_OVERSAMPLE));
+    int sample_pos = 2 * BLI_CROSSINGS * ((int)(position*((float)BLI_OVERSAMPLE)));
     for (int j=0; j<BLI_CROSSINGS*2; j++)
     {
       corrections[(idx_play + j) % CIRCULAR_BUFFER_LEN] += value*ljw::Bli::step_corrections[sample_pos];
-      sample_pos += BLI_OVERSAMPLE;
+      sample_pos++;
     }
 }

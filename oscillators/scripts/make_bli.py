@@ -53,12 +53,15 @@ if __name__ == '__main__':
 
     plt.show()
     N = len(data)
+
+    # Reorder such that steping through in jumps of size `OVER_SAMPLE` is done with steps of size 1.
+    reordered = np.zeros(N)
+    for i in range(0, OVER_SAMPLE):
+      for j in range(0, 2*CROSSINGS):
+        reordered[i * 2*CROSSINGS + j] = step[i + j*OVER_SAMPLE]
+
     print('namespace ljw\n{')
-    print(f'  float bli[{N}] = {{', end='')
-    for x in data:
-      print(f'{x:.9f},', end='')
-    print('};\n')
-    print(f'  float step_corrections[{N}] = {{', end='')
-    for x in step:
+    print(f'  float Bli::step_corrections[{N}] = {{', end='')
+    for x in reordered:
       print(f'{x:.9f},', end='')
     print('};\n}')
