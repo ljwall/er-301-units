@@ -2,7 +2,7 @@
 
 #include "../lib/bli.h"
 
-#define CIRCULAR_BUFFER_LEN  (BLI_LEN * 2)
+#define CIRCULAR_BUFFER_LEN 512
 
 class OscBase
 {
@@ -16,4 +16,7 @@ class OscBase
     int idx_work, idx_play;
 
     void applyJump(float value, float position);
+
+  private:
+    void scaleAdd(float *__restrict__ target, float multiplier, float *__restrict__ source, unsigned int n);
 };
