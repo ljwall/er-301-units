@@ -266,7 +266,7 @@ class Saw : public od::Object
     od::Inlet mFreq{"Freq"};
 
   private:
-    mydsp* DSP;
+    mydsp DSP;
 
 #endif
 
