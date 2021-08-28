@@ -1,9 +1,10 @@
 <<includeIntrinsic>>
-#include "saw.h"
-#include <od/config.h>
+
+#include <od/objects/Object.h>
 
 #define FAUSTFLOAT float
 
+#ifndef SWIGLUA
 class dsp {};
 
 struct Meta {
@@ -44,23 +45,23 @@ struct UI {
 };
 
 <<includeclass>>
+#endif
 
-Saw::Saw()
-{
-  addOutput(mOutput);
-  addInput(mFreq);
-  DSP = new mydsp();
-  ((mydsp*)DSP)->init(globalConfig.sampleRate);
-}
 
-Saw::~Saw()
+class Saw : public od::Object
 {
-  delete((mydsp*)DSP);
-}
+  public:
+    Saw();
+    ~Saw();
 
-void Saw::process()
-{
-  FAUSTFLOAT* inputs[] = { mFreq.buffer() };
-  FAUSTFLOAT* outputs[] = { mOutput.buffer() };
-  ((mydsp*)DSP)->compute(FRAMELENGTH, inputs, outputs);
-}
+#ifndef SWIGLUA
+    virtual void process();
+    od::Outlet mOutput{"Out"};
+    od::Inlet mFreq{"Freq"};
+
+  private:
+    mydsp* DSP;
+
+#endif
+
+};

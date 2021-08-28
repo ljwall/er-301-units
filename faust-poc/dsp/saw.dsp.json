@@ -1,0 +1,31 @@
+{
+	"name": "saw",
+	"filename": "saw.dsp",
+	"version": "2.20.2",
+	"compile_options": "-lang cpp -scal -ftz 0",
+	"library_list": ["/usr/share/faust/stdfaust.lib","/usr/share/faust/oscillators.lib","/usr/share/faust/maths.lib"],
+	"include_pathnames": ["/usr/share/faust","/usr/local/share/faust","/usr/share/faust","dsp","/home/liam/code/er-301-units/faust-poc/dsp"],
+	"inputs": 1,
+	"outputs": 1,
+	"meta": [ 
+		{ "er301_input": "freq" },
+		{ "er301_output": "out" },
+		{ "filename": "saw.dsp" },
+		{ "maths.lib/author": "GRAME" },
+		{ "maths.lib/copyright": "GRAME" },
+		{ "maths.lib/license": "LGPL with exception" },
+		{ "maths.lib/name": "Faust Math Library" },
+		{ "maths.lib/version": "2.1" },
+		{ "name": "saw" },
+		{ "oscillators.lib/name": "Faust Oscillator Library" },
+		{ "oscillators.lib/version": "0.0" }
+	],
+	"ui": [ 
+		{
+			"type": "vgroup",
+			"label": "saw",
+			"items": [
+			]
+		}
+	]
+}

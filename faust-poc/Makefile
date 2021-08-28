@@ -41,5 +41,5 @@ symbols =
 
 include $(SDKPATH)/scripts/tutorial.mk
 
-dsp/saw.cpp: dsp/saw.dsp  dsp/arch.cpp
+dsp/saw.h: dsp/saw.dsp  dsp/arch.cpp
 	faust -a dsp/arch.cpp -vec -vs 4 -o $@ $<
