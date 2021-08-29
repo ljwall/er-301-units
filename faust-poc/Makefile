@@ -41,5 +41,9 @@ symbols =
 
 include $(SDKPATH)/scripts/tutorial.mk
 
-dsp/%.cpp dsp/%.h : dsp/%.dsp
+dsp/%.cpp dsp/%.h: dsp/%.dsp
 	faust2er301 $<
+
+# Prevent make from deleting these intermidiate files in
+# case we'd like to inspect them.
+.PRECIOUS: dsp/%.cpp dsp/%.h
