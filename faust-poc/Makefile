@@ -28,8 +28,8 @@ PROFILE ?= testing
 SDKPATH ?= ../er-301
 
 # Describe your files to this makefile:
-headers = dsp/saw.h
-sources = dsp/saw.cpp dsp/faustpoc.cpp.swig
+headers = dsp/Saw.h
+sources = dsp/Saw.cpp dsp/faustpoc.cpp.swig
 assets = toc.lua Saw.lua
 includes = . ./dsp/
 
@@ -41,5 +41,5 @@ symbols =
 
 include $(SDKPATH)/scripts/tutorial.mk
 
-dsp/saw.h: dsp/saw.dsp  dsp/arch.cpp
-	faust -a dsp/arch.cpp -vec -vs 4 -o $@ $<
+dsp/%.cpp dsp/%.h : dsp/%.dsp
+	faust2er301 $<

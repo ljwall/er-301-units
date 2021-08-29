@@ -9,7 +9,7 @@
 #undef SWIGLUA
 
 // Add header files necessary for compilation of the interfaces added further down.
-#include <saw.h>
+#include <Saw.h>
 
 #define SWIGLUA
 
@@ -19,4 +19,4 @@
 // Usually just %include'ing the header file is enough.
 // Code bracked by #ifndef SWIGLUA will be ignored here.
 
-%include <saw.h>
+%include <Saw.h>
