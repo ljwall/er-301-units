@@ -10,34 +10,46 @@ local Saw = Class {}
 Saw:include(Unit)
 
 function Saw:init(args)
-  args.title = "Faust Saw"
-  args.mnemonic = "FS"
+  args.title = "Dattorro Reverb"
+  args.mnemonic = "DR"
   Unit.init(self, args)
 end
 
 function Saw:onLoadGraph(channelCount)
-  local osc = self:addObject("osc", lib.Saw())
+  local rev = self:addObject("rev", lib.Saw())
 
-  -- local f0 = self:addObject("f0", app.GainBias())
-  -- local f0Range = self:addObject("f0Range", app.MinMax())
+  local bandwidth = self:addObject("BandWidth", app.ParameterAdapter())
+  local decay = self:addObject("Decay", app.ParameterAdapter())
+  local damping = self:addObject("Damping", app.ParameterAdapter())
+  local drywet = self:addObject("DryWet", app.ParameterAdapter())
 
-  -- connect(f0, "Out", osc, "Freq")
-  -- connect(f0, "Out", f0Range, "In")
+  tie(rev, "BandWidth", bandwidth, "Out")
+  self:addMonoBranch("bandwidth", bandwidth, "In", bandwidth, "Out")
 
-  connect(osc, "OutL", self, "Out1")
-  connect(self, "In1", osc, "InL")
+  tie(rev, "Decay", decay, "Out")
+  self:addMonoBranch("decay", decay, "In", decay, "Out")
+
+  tie(rev, "Damping", damping, "Out")
+  self:addMonoBranch("damping", damping, "In", damping, "Out")
+
+  tie(rev, "DryWet", drywet, "Out")
+  self:addMonoBranch("drywet", drywet, "In", drywet, "Out")
+
+  connect(rev, "OutL", self, "Out1")
+  connect(self, "In1", rev, "InL")
 
   if channelCount > 1 then
-    connect(osc, "OutR", self, "Out2")
-    connect(self, "In1", osc, "InR")
+    connect(rev, "OutR", self, "Out2")
+    connect(self, "In1", rev, "InR")
   end
-
-  -- self:addMonoBranch("f0", f0, "In", f0, "Out")
 end
 
 local views = {
   expanded = {
-    "freq",
+    "bandwidth",
+    "decay",
+    "damping",
+    "drywet",
   },
   collapsed = {},
 }
@@ -45,18 +57,49 @@ local views = {
 function Saw:onLoadViews(objects, branches)
   local controls = {}
 
-  -- controls.freq = GainBias {
-  --   button = "f0",
-  --   description = "Fundamental",
-  --   branch = branches.f0,
-  --   gainbias = objects.f0,
-  --   range = objects.f0Range,
-  --   biasMap = Encoder.getMap("oscFreq"),
-  --   biasUnits = app.unitHertz,
-  --   initialBias = 27.5,
-  --   gainMap = Encoder.getMap("freqGain"),
-  --   scaling = app.octaveScaling
-  -- }
+  controls.bandwidth = GainBias {
+    button = "bandwidth",
+    description = "bandwidth",
+    branch = branches.bandwidth,
+    gainbias = objects.BandWidth,
+    range = objects.BandWidth,
+    biasUnits = app.unitNone,
+    biasMap = Encoder.getMap("[0,1]"),
+    initialBias = 0.6,
+  }
+
+  controls.decay = GainBias {
+    button = "decay",
+    description = "decay",
+    branch = branches.decay,
+    gainbias = objects.Decay,
+    range = objects.Decay,
+    biasUnits = app.unitNone,
+    biasMap = Encoder.getMap("[0,1]"),
+    initialBias = 0.8,
+  }
+
+  controls.damping = GainBias {
+    button = "damping",
+    description = "damping",
+    branch = branches.damping,
+    gainbias = objects.Damping,
+    range = objects.Damping,
+    biasUnits = app.unitNone,
+    biasMap = Encoder.getMap("[0,1]"),
+    initialBias = 0.25,
+  }
+
+  controls.drywet = GainBias {
+    button = "drywet",
+    description = "drywet",
+    branch = branches.drywet,
+    gainbias = objects.DryWet,
+    range = objects.DryWet,
+    biasUnits = app.unitNone,
+    biasMap = Encoder.getMap("[0,1]"),
+    initialBias = 0.25,
+  }
 
   return controls, views
 end
