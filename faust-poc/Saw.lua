@@ -24,11 +24,12 @@ function Saw:onLoadGraph(channelCount)
   -- connect(f0, "Out", osc, "Freq")
   -- connect(f0, "Out", f0Range, "In")
 
-  connect(osc, "Out", self, "Out1")
-  connect(self, "In1", osc, "In")
+  connect(osc, "OutL", self, "Out1")
+  connect(self, "In1", osc, "InL")
 
   if channelCount > 1 then
-    connect(osc, "Out", self, "Out2")
+    connect(osc, "OutR", self, "Out2")
+    connect(self, "In1", osc, "InR")
   end
 
   -- self:addMonoBranch("f0", f0, "In", f0, "Out")
