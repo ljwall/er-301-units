@@ -6,17 +6,17 @@ local GainBias = require "Unit.ViewControl.GainBias"
 local Gate = require "Unit.ViewControl.Gate"
 local Encoder = require "Encoder"
 
-local Saw = Class {}
-Saw:include(Unit)
+local Dattorro = Class {}
+Dattorro:include(Unit)
 
-function Saw:init(args)
+function Dattorro:init(args)
   args.title = "Dattorro Reverb"
   args.mnemonic = "DR"
   Unit.init(self, args)
 end
 
-function Saw:onLoadGraph(channelCount)
-  local rev = self:addObject("rev", lib.Saw())
+function Dattorro:onLoadGraph(channelCount)
+  local rev = self:addObject("rev", lib.Dattorro())
 
   local bandwidth = self:addObject("BandWidth", app.ParameterAdapter())
   local decay = self:addObject("Decay", app.ParameterAdapter())
@@ -54,7 +54,7 @@ local views = {
   collapsed = {},
 }
 
-function Saw:onLoadViews(objects, branches)
+function Dattorro:onLoadViews(objects, branches)
   local controls = {}
 
   controls.bandwidth = GainBias {
@@ -104,4 +104,4 @@ function Saw:onLoadViews(objects, branches)
   return controls, views
 end
 
-return Saw
+return Dattorro
