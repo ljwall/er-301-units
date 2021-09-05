@@ -28,9 +28,9 @@ PROFILE ?= testing
 SDKPATH ?= ../er-301
 
 # Describe your files to this makefile:
-headers = dsp/Dattorro.h
-sources = dsp/Dattorro.cpp dsp/faustpoc.cpp.swig
-assets = toc.lua Dattorro.lua
+headers = dsp/Dattorro.h dsp/DattorroPlus.h
+sources = dsp/Dattorro.cpp dsp/DattorroPlus.cpp dsp/faustpoc.cpp.swig
+assets = toc.lua Dattorro.lua DattorroPlus.lua
 includes = . ./dsp/
 
 # Do you need any additional preprocess symbols?
