@@ -11,6 +11,10 @@
 // Add header files necessary for compilation of the interfaces added further down.
 #include <DattorroPlus.h>
 #include <Dattorro.h>
+#include <FDelay.h>
+#include <FDelaylti.h>
+#include <FDelayltv.h>
+#include <SDelay.h>
 
 #define SWIGLUA
 
@@ -22,3 +26,7 @@
 
 %include <DattorroPlus.h>
 %include <Dattorro.h>
+%include <FDelay.h>
+%include <FDelaylti.h>
+%include <FDelayltv.h>
+%include <SDelay.h>

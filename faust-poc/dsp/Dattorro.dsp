@@ -9,7 +9,6 @@ decay_ctrl = hslider("Decay", 0.8, 0, 1, 0.001) : si.smoo;
 damping_ctr = hslider("Damping", 0.25, 0, 1, 0.001) : si.smoo;
 dry_wet_ctr = hslider("DryWet", 0.25, 0, 1, 0.001) : si.smoo;
 
-
 dry_wet_mix(mix, dry_l, dry_r, wet_l, wet_r) = (1-mix) * dry_l, (1-mix) * dry_r, mix * wet_l, mix * wet_r :> _,_;
 
 // Name the ins and outs of the `process` function for use in the er-301 object

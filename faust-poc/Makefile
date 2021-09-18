@@ -27,10 +27,12 @@ LIBNAME ?= libfaustpoc
 PROFILE ?= testing
 SDKPATH ?= ../er-301
 
+units = FDelayltv FDelaylti SDelay FDelay Dattorro DattorroPlus
+
 # Describe your files to this makefile:
-headers = dsp/Dattorro.h dsp/DattorroPlus.h
-sources = dsp/Dattorro.cpp dsp/DattorroPlus.cpp dsp/faustpoc.cpp.swig
-assets = toc.lua Dattorro.lua DattorroPlus.lua
+headers = $(patsubst %,dsp/%.h,$(units))
+sources = $(patsubst %,dsp/%.cpp,$(units)) dsp/faustpoc.cpp.swig
+assets = $(patsubst %,%.lua,$(units)) toc.lua
 includes = . ./dsp/
 
 # Do you need any additional preprocess symbols?

@@ -15,5 +15,25 @@ return {
       moduleName = "DattorroPlus",
       category = "Faust POC",
     },
+    {
+      title = "FDelay",
+      moduleName = "FDelay",
+      category = "Faust POC",
+    },
+    {
+      title = "SDelay",
+      moduleName = "SDelay",
+      category = "Faust POC",
+    },
+    {
+      title = "FDelaylti",
+      moduleName = "FDelaylti",
+      category = "Faust POC",
+    },
+    {
+      title = "FDelayltv",
+      moduleName = "FDelayltv",
+      category = "Faust POC",
+    },
   }
 }

@@ -3,14 +3,13 @@ import("stdfaust.lib");
 declare dattorro_rev_2 author "Jakob Zerbian, Liam Wall";
 declare dattorro_rev_2 license "MIT-style STK-4.3 license";
 
-
 dattorro_rev_2(pre_delay, bw, i_diff1, i_diff2, decay, d_diff1, d_diff2, damping) =
     si.bus(2) : + : *(0.5) : predelay : bw_filter : diffusion_network <: ((si.bus(4) :> _,_) ~ (reverb_network : ro.cross(2)))
 with {
     // allpass using delay with fixed size
     allpass_f(t, a) = (+ <: @(t),*(a)) ~ *(-a) : mem,_ : +;
     // allpass using delay with excursion
-    allpass_exc(t, a, i) = (+ <: de.fdelaylti(1, t+200, t + 16*os.oscsin(0.8 + i/2.87983274932749287429847)),*(a)) ~ *(-a) : mem,_ : +;
+    allpass_exc(t, a, i) = (+ <: de.fdelayltv(2, t+200, t + 16*os.oscsin(0.8 + i/2.87983274932749287429847)),*(a)) ~ *(-a) : mem,_ : +;
 
     // input pre-delay and diffusion
     predelay = @(pre_delay);
