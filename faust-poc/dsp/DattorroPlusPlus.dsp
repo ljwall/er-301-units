@@ -8,6 +8,8 @@ dattorro_rev_2(pre_delay, bw, i_diff1, i_diff2, decay, d_diff1, d_diff2, damping
 with {
     // allpass using delay with fixed size
     allpass_f(t, a) = (+ <: @(t),*(a)) ~ *(-a) : mem,_ : +;
+    // allpass using delay with fixed size, and two extra taps
+    allpass_f_taps(t, a, tap_1, tap_2) = (+ <: @(t),*(a),@(tap_1),@(tap_2)) ~ *(-a) : mem,_,_,_ : +,_,_;
     // allpass using delay with excursion
     allpass_exc(t, a, i) = (+ <: de.fdelayltv(2, t+200, t + 16*os.oscsin(0.8 + i/2.87983274932749287429847)),*(a)) ~ *(-a) : mem,_ : +;
 
@@ -20,23 +22,48 @@ with {
     tapL(m, c, l, r) = c, l + m*c, r;
     tapR(m, c, l, r) = c, l, m*c + r;
 
-    // Contains node_23_24
+
+    // /********* left  output,  all  wet  *********/
+    // [x] accumulator =  0.6  X  node48_54[266]
+    // [x] accumulator +=  0.6  x  node48_54[2974]
+    // [x] accumulator -=  0.6  X  node55_59[1913]
+    // [x] accumulator +=  0.6  X  node59_63[1996]
+    // [x] accumulator -=  0.6  X  node24_30[1990]
+    // [x] accumulator -=  0.6  x  node31_33[187]
+    // [x] YL  =  accumulator -  0.6  X  node33_39[1066]
+
+    // /********* right  output,  all  wet  *********/
+    // [x] accumulator =  0.6  X  node24_30[353]
+    // [x] accumulator +=  0.6  X  node24_30[3627]
+    // [x] accumulator -=  0.6  X  node31_33[1228]
+    // [x] accumulator +=  0.6  X  node33_39[2673]
+    // [x] accumulator -=  0.6  X  node48_54[2111]
+    // [x] accumulator -=  0.6  X  node55_59[335]
+    // [x] YR  =  accumulator -  0.6  X  node59_63[121]
+
+    // Contains node23_24
     decay_diffusion_1a = allpass_exc(672,-d_diff1, 0),_,_;
 
-    // node_24_30
-    z_4453 = (@(353),_,_): tapR(0.6) : (@(3627 - 353),_,_): tapR(0.6) : (@(4453 - 3627 - 353),_,_);
+    // node24_30
+    z_4453 = (_ <: @(4453), @(1990), @(353), @(3627) : _,_,+ : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
-    // Contains node_31_33
-    decay_diffusion_2a = allpass_f(1800, d_diff2),_,_;
+    // Contains node31_33
+    decay_diffusion_2a = (allpass_f_taps(1800, d_diff2, 187, 1228) : _,*(-0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
-    // Contains node_46_48
+    // node33_39
+    z_3720 = (_ <: @(3720), @(1066), @(2673) : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+
+    // Contains node46_48
     decay_diffusion_1b = allpass_exc(908,-d_diff1, 0),_,_;
 
-    // node_48_54
-    z_4217 = (@(266),_,_) : tapL(0.6) : (@(2974 - 266),_,_) : tapL(0.6) : (@(4217 - 2974 - 266),_,_);
+    // node48_54
+    z_4217 = (_ <: @(4217), @(266), @(2974), @(2111) : _,+,_ : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
-    // Contains node_55_59
-    decay_diffusion_2b = allpass_f(2656, d_diff2),_,_;
+    // Contains node55_59
+    decay_diffusion_2b = (allpass_f_taps(2656, d_diff2, 1913, 335): _,*(-0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+
+    // node59_63
+    z_3163 = (_ <: @(3163), @(1996), @(121) : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+ ;
 
     // Three channels: (1) is the output to loop, (2) is Left, and (3) is right.
     reverb_chain(loop_in, in)
@@ -46,14 +73,14 @@ with {
          : z_4453
          : damp
          : decay_diffusion_2a
-         : (@(3720),_,_)
+         : z_3720
          : (*(decay),_,_)
          : (+(in),_,_)
          : decay_diffusion_1b
          : z_4217
          : damp
          : decay_diffusion_2b
-         : (@(3163),_,_)
+         : z_3163
          : (*(decay),_,_);
 
 
