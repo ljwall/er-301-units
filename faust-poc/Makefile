@@ -27,7 +27,7 @@ LIBNAME ?= libfaustpoc
 PROFILE ?= testing
 SDKPATH ?= ../er-301
 
-units = FDelayltv FDelaylti SDelay FDelay Dattorro DattorroPlus DattorroPlusPlus
+units = FDelayltv FDelaylti SDelay FDelay DattorroPlusPlus
 
 # Describe your files to this makefile:
 headers = $(patsubst %,dsp/%.h,$(units))
