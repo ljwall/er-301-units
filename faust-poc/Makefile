@@ -21,9 +21,9 @@
 # rather than auto-generated.
 
 # Override these defaults on the commandline:
-PKGNAME ?= faust_poc
+PKGNAME ?= faustian
 PKGVERSION ?= 0.0.1
-LIBNAME ?= libfaustpoc
+LIBNAME ?= libfaustian
 PROFILE ?= testing
 SDKPATH ?= ../er-301
 
@@ -31,7 +31,7 @@ units = FDelayltv FDelaylti SDelay FDelay DattorroPlusPlus
 
 # Describe your files to this makefile:
 headers = $(patsubst %,dsp/%.h,$(units))
-sources = $(patsubst %,dsp/%.cpp,$(units)) dsp/faustpoc.cpp.swig
+sources = $(patsubst %,dsp/%.cpp,$(units)) dsp/faustian.cpp.swig
 assets = $(patsubst %,%.lua,$(units)) toc.lua
 includes = . ./dsp/
 

@@ -1,4 +1,4 @@
-local lib = require "faust_poc.libfaustpoc"
+local lib = require "faustian.libfaustian"
 local Class = require "Base.Class"
 local Unit = require "Unit"
 local Pitch = require "Unit.ViewControl.Pitch"

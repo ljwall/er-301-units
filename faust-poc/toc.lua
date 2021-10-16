@@ -1,13 +1,13 @@
 return {
-  name = "Faust POC",
-  title = "Faust POC",
+  name = "Faustian",
+  title = "Faustian",
   author = "ljw",
   units = {
     {
       -- Title and category control how this unit appears in the unit browser.
-      title = "Dattorro Reverb PlusPlus",
+      title = "Dattorro Reverb",
       moduleName = "DattorroPlusPlus",
-      category = "Faust POC",
+      category = "Delays and Reverb",
     },
     {
       title = "FDelay",
