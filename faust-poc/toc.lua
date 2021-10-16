@@ -9,25 +9,5 @@ return {
       moduleName = "DattorroPlusPlus",
       category = "Delays and Reverb",
     },
-    {
-      title = "FDelay",
-      moduleName = "FDelay",
-      category = "Faust POC",
-    },
-    {
-      title = "SDelay",
-      moduleName = "SDelay",
-      category = "Faust POC",
-    },
-    {
-      title = "FDelaylti",
-      moduleName = "FDelaylti",
-      category = "Faust POC",
-    },
-    {
-      title = "FDelayltv",
-      moduleName = "FDelayltv",
-      category = "Faust POC",
-    },
   }
 }
