@@ -27,7 +27,7 @@ LIBNAME ?= libfaustian
 PROFILE ?= testing
 SDKPATH ?= ../er-301
 
-units = FDelayltv FDelaylti SDelay FDelay DattorroPlusPlus
+units = DattorroPlusPlus
 
 # Describe your files to this makefile:
 headers = $(patsubst %,dsp/%.h,$(units))

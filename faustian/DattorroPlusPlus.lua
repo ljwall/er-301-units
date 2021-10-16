@@ -10,8 +10,8 @@ local DattorroPlusPlus = Class {}
 DattorroPlusPlus:include(Unit)
 
 function DattorroPlusPlus:init(args)
-  args.title = "Dattorro Reverb PlusPlus"
-  args.mnemonic = "DP"
+  args.title = "Dattorro Reverb"
+  args.mnemonic = "DR"
   Unit.init(self, args)
 end
 
