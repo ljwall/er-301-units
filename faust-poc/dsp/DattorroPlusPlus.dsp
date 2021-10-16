@@ -11,17 +11,20 @@ with {
     // allpass using delay with fixed size, and two extra taps
     allpass_f_taps(t, a, tap_1, tap_2) = (+ <: @(t),*(a),@(tap_1),@(tap_2)) ~ *(-a) : mem,_,_,_ : +,_,_;
     // allpass using delay with excursion
-    allpass_exc(t, a, i) = (+ <: de.fdelayltv(2, t+200, t + 16*os.oscsin(0.8 + i/2.87983274932749287429847)),*(a)) ~ *(-a) : mem,_ : +;
+    allpass_exc(t, a, i) = (+ <: de.fdelayltv(2, t+20, t + 16*ba.take(i, mods)),*(a)) ~ *(-a) : mem,_ : +
+    with {
+      epsilon = 0.00013; // Around 1Hz
+      mods = y,yq letrec {
+          'yq = os.impulse + yq - epsilon*y;
+          'y = epsilon * (yq - epsilon *y) + y;
+      };
+    };
 
     // input pre-delay and diffusion
     predelay = @(pre_delay);
     bw_filter = *(bw) : +~(mem : *(1-bw));
     diffusion_network = allpass_f(142, i_diff1) : allpass_f(107, i_diff1) : allpass_f(379, i_diff2) : allpass_f(277, i_diff2);
     damp = (*(1-damping) : +~*(damping) : *(decay)), _,_;
-
-    tapL(m, c, l, r) = c, l + m*c, r;
-    tapR(m, c, l, r) = c, l, m*c + r;
-
 
     // /********* left  output,  all  wet  *********/
     // [x] accumulator =  0.6  X  node48_54[266]
@@ -42,7 +45,7 @@ with {
     // [x] YR  =  accumulator -  0.6  X  node59_63[121]
 
     // Contains node23_24
-    decay_diffusion_1a = allpass_exc(672,-d_diff1, 0),_,_;
+    decay_diffusion_1a = allpass_exc(672,-d_diff1, 1),_,_;
 
     // node24_30
     z_4453 = (_ <: @(4453), @(1990), @(353), @(3627) : _,_,+ : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
@@ -54,7 +57,7 @@ with {
     z_3720 = (_ <: @(3720), @(1066), @(2673) : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
     // Contains node46_48
-    decay_diffusion_1b = allpass_exc(908,-d_diff1, 0),_,_;
+    decay_diffusion_1b = allpass_exc(908,-d_diff1, 2),_,_;
 
     // node48_54
     z_4217 = (_ <: @(4217), @(266), @(2974), @(2111) : _,+,_ : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
@@ -82,7 +85,6 @@ with {
          : decay_diffusion_2b
          : z_3163
          : (*(decay),_,_);
-
 
     reverb_loop = reverb_chain~_ : (si.block(1),_,_);
 };
