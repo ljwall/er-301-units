@@ -23,7 +23,7 @@ with {
     // input pre-delay and diffusion
     predelay = @(pre_delay);
     bw_filter = *(bw) : +~(mem : *(1-bw));
-    diffusion_network = allpass_f(142, i_diff1) : allpass_f(107, i_diff1) : allpass_f(379, i_diff2) : allpass_f(277, i_diff2);
+    diffusion_network = allpass_f(235, i_diff1) : allpass_f(177, i_diff1) : allpass_f(627, i_diff2) : allpass_f(458, i_diff2);
     damp = (*(1-damping) : +~*(damping) : *(decay)), _,_;
 
     // /********* left  output,  all  wet  *********/
@@ -45,28 +45,28 @@ with {
     // [x] YR  =  accumulator -  0.6  X  node59_63[121]
 
     // Contains node23_24
-    decay_diffusion_1a = allpass_exc(672,-d_diff1, 1),_,_;
+    decay_diffusion_1a = allpass_exc(1112,-d_diff1, 1),_,_;
 
     // node24_30
-    z_4453 = (_ <: @(4453), @(1990), @(353), @(3627) : _,_,+ : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+    z_4453 = (_ <: @(7370), @(3293), @(584), @(6003) : _,_,+ : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
     // Contains node31_33
-    decay_diffusion_2a = (allpass_f_taps(1800, d_diff2, 187, 1228) : _,*(-0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+    decay_diffusion_2a = (allpass_f_taps(2979, d_diff2, 309, 2032) : _,*(-0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
     // node33_39
-    z_3720 = (_ <: @(3720), @(1066), @(2673) : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+    z_3720 = (_ <: @(6157), @(1764), @(4424) : _,*(-0.6),*(0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
     // Contains node46_48
-    decay_diffusion_1b = allpass_exc(908,-d_diff1, 2),_,_;
+    decay_diffusion_1b = allpass_exc(1502,-d_diff1, 2),_,_;
 
     // node48_54
-    z_4217 = (_ <: @(4217), @(266), @(2974), @(2111) : _,+,_ : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+    z_4217 = (_ <: @(6979), @(440), @(4922), @(3494) : _,+,_ : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
     // Contains node55_59
-    decay_diffusion_2b = (allpass_f_taps(2656, d_diff2, 1913, 335): _,*(-0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
+    decay_diffusion_2b = (allpass_f_taps(4396, d_diff2, 3166, 554): _,*(-0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+;
 
     // node59_63
-    z_3163 = (_ <: @(3163), @(1996), @(121) : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+ ;
+    z_3163 = (_ <: @(5235), @(3303), @(200) : _,*(0.6),*(-0.6)),_,_ : _,_,ro.cross(2),_ : _,+,+ ;
 
     // Three channels: (1) is the output to loop, (2) is Left, and (3) is right.
     reverb_chain(loop_in, in)
