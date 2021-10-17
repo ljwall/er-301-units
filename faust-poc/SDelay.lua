@@ -1,4 +1,4 @@
-local lib = require "faustian.libfaustian"
+local lib = require "faustpoc.libfaustpoc"
 local Class = require "Base.Class"
 local Unit = require "Unit"
 local GainBias = require "Unit.ViewControl.GainBias"

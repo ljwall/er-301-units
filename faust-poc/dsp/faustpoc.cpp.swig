@@ -9,7 +9,7 @@
 #undef SWIGLUA
 
 // Add header files necessary for compilation of the interfaces added further down.
-#include <DattorroPlusPlus.h>
+#include <Z2000.h>
 #include <FDelay.h>
 #include <FDelaylti.h>
 #include <FDelayltv.h>
@@ -23,7 +23,7 @@
 // Usually just %include'ing the header file is enough.
 // Code bracked by #ifndef SWIGLUA will be ignored here.
 
-%include <DattorroPlusPlus.h>
+%include <Z2000.h>
 %include <FDelay.h>
 %include <FDelaylti.h>
 %include <FDelayltv.h>
