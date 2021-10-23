@@ -1,10 +1,12 @@
 local lib = require "faustian.libfaustian"
+
 local Class = require "Base.Class"
-local Unit = require "Unit"
-local Pitch = require "Unit.ViewControl.Pitch"
+local Encoder = require "Encoder"
+local Fader = require "Unit.ViewControl.Fader"
 local GainBias = require "Unit.ViewControl.GainBias"
 local Gate = require "Unit.ViewControl.Gate"
-local Encoder = require "Encoder"
+local Pitch = require "Unit.ViewControl.Pitch"
+local Unit = require "Unit"
 
 local DattorroPlusPlus = Class {}
 DattorroPlusPlus:include(Unit)
@@ -48,6 +50,7 @@ end
 
 local views = {
   expanded = {
+    "predelay",
     "bandwidth",
     "decay",
     "damping",
@@ -56,8 +59,18 @@ local views = {
   collapsed = {},
 }
 
+local predelayMap = app.LinearDialMap(0, 100)
+predelayMap:setSteps(5, 1, 0.5, 0.1)
+
 function DattorroPlusPlus:onLoadViews(objects, branches)
   local controls = {}
+
+  controls.predelay = Fader {
+    button = "Predelay",
+    description = "Predelay (ms)",
+    param = objects.rev:getParameter("Predelay"),
+    map = predelayMap,
+  }
 
   controls.bandwidth = GainBias {
     button = "bandwidth",

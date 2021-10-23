@@ -21,7 +21,7 @@ with {
     };
 
     // input pre-delay and diffusion
-    predelay = @(pre_delay);
+    predelay = de.delay(9600, pre_delay);
     bw_filter = *(bw) : +~(mem : *(1-bw));
     diffusion_network = allpass_f(235, i_diff1) : allpass_f(177, i_diff1) : allpass_f(627, i_diff2) : allpass_f(458, i_diff2);
     damp = (*(1-damping) : +~*(damping) : *(decay)), _,_;
@@ -90,9 +90,10 @@ with {
 };
 
 // Dattorro reverb with difusion parameters as per https://ccrma.stanford.edu/~dattorro/EffectDesignPart1.pdf
-reverb(band_width, decay, damping) = dattorro_rev_2(0, band_width, 0.75, 0.625, decay, 0.7, 0.5, damping);
+reverb(pre_delay, band_width, decay, damping) = dattorro_rev_2(pre_delay, band_width, 0.75, 0.625, decay, 0.7, 0.5, damping);
 
 // Contols (will become parameters in the er-301 object)
+pre_delay_ctrl = hslider("Predelay", 10, 0, 100, 0.5) : /(1000) : ba.sec2samp;
 band_width_ctrl = hslider("BandWidth", 0.6, 0, 1, 0.001) : si.smoo;
 decay_ctrl = hslider("Decay", 0.8, 0, 1, 0.001) : si.smoo;
 damping_ctr = hslider("Damping", 0.25, 0, 1, 0.001) : si.smoo;
@@ -106,4 +107,4 @@ declare er301_in2 "InR";
 declare er301_out1 "OutL";
 declare er301_out2 "OutR";
 
-process = _,_ <: _,_,reverb(band_width_ctrl, decay_ctrl, damping_ctr): dry_wet_mix(dry_wet_ctr);
+process = _,_ <: _,_,reverb(pre_delay_ctrl, band_width_ctrl, decay_ctrl, damping_ctr): dry_wet_mix(dry_wet_ctr);

@@ -22,7 +22,7 @@
 
 # Override these defaults on the commandline:
 PKGNAME ?= faustian
-PKGVERSION ?= 0.0.1
+PKGVERSION ?= 0.0.2
 LIBNAME ?= libfaustian
 PROFILE ?= testing
 SDKPATH ?= ../er-301
