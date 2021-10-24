@@ -27,7 +27,7 @@ LIBNAME ?= libfaustian
 PROFILE ?= testing
 SDKPATH ?= ../er-301
 
-units = DattorroPlusPlus
+units = DattorroPlusPlus Andromeda
 
 # Describe your files to this makefile:
 headers = $(patsubst %,dsp/%.h,$(units))
