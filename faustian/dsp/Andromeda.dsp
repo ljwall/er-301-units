@@ -24,6 +24,7 @@ andromeda(decay, low_pass, high_pass) = _,_ : + : *(0.5) : (+~chain) <: chain_l,
     'aq = os.impulse + aq - epsilon4*a;
     'a = epsilon4 * (aq - epsilon4 *a) + a;
   };
+  limiter(x) = 2 * x / sqrt(x*x +4);
   depth = ba.sec2samp(0.004);
   chain = _
        <: par(i, ba.count(taps), line(ba.sec2samp(ba.take(i+1, taps)) + depth*ba.take(1 + (i % (ba.count(mods))), mods)))
@@ -31,7 +32,7 @@ andromeda(decay, low_pass, high_pass) = _,_ : + : *(0.5) : (+~chain) <: chain_l,
         : fi.lowpass(1, low_pass)
         : fi.highpass(1, high_pass)
         : *(decay)
-        : aa.parabolic;
+        : limiter;
 
   line_out = de.delay(24000);
   taps_l = (0.060, 0.137, 0.175, 0.190);
@@ -47,8 +48,8 @@ declare er301_out2 "OutR";
 
 process = _,_ <: _,_,andromeda(decay_ctrl, low_ctrl, high_ctrl): dry_wet_mix(dry_wet_ctr) with {
   decay_ctrl = hslider("Decay", 0.8, 0, 5, 0.001) : si.smoo;
-  low_ctrl = hslider("HighCut", 20000, 100, 20000, 100) : min(20000) : si.smoo;
-  high_ctrl = hslider("LowCut", 20, 20, 20000, 100) : max(20) : si.smoo;
+  low_ctrl = hslider("HighCut", 20000, 100, 20000, 100) : min(20000);
+  high_ctrl = hslider("LowCut", 20, 20, 20000, 100) : max(20);
   dry_wet_ctr = hslider("DryWet", 0.25, 0, 1, 0.001) : si.smoo;
   dry_wet_mix(mix, dry_l, dry_r, wet_l, wet_r) = (1-mix) * dry_l, (1-mix) * dry_r, mix * wet_l, mix * wet_r :> _,_;
 };
