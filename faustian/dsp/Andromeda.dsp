@@ -3,14 +3,34 @@ import("stdfaust.lib");
 declare andromeda author "Liam Wall";
 declare andromeda license "MIT-style STK-4.3 license";
 
-andromeda(decay, low_pass, high_pass) = _,_ : + : *(0.5) : (+~chain) <: chain_l, chain_r with {
+andromeda(decay, low_pass, high_pass) = _,_ : + : *(0.5) : diffusion_network : (+~chain) <: chain_l, chain_r with {
+
+  // allpass using delay with fixed size
+  allpass_f(t, a) = (+ <: @(t),*(a)) ~ *(-a) : mem,_ : +;
+  i_diff1 = 0.75;
+  i_diff2 = 0.625;
+  diffusion_network = allpass_f(235, i_diff1) : allpass_f(177, i_diff1) : allpass_f(627, i_diff2) : allpass_f(458, i_diff2);
+
   line = de.fdelayltv(2, 28800);
   taps = (0.047, 0.120, 0.134, 0.146, 0.158, 0.169, 0.180, 0.190, 0.200, 0.209, 0.217, 0.233, 0.240, 0.244, 0.225, 0.247);
+
   //epsilon = 0.00013; // Around 1Hz
-  epsilon1 =  0.000130;
-  epsilon2 =  0.000063;
-  epsilon3 =  0.000043;
-  epsilon4 =  0.000020;
+
+  //epsilon1 =  0.000130;
+  //epsilon2 =  0.000063;
+  //epsilon3 =  0.000043;
+  //epsilon4 =  0.000020;
+
+  //epsilon1 =  0.000063;
+  //epsilon2 =  0.000043;
+  //epsilon3 =  0.000020;
+  //epsilon4 =  0.000005;
+
+  epsilon1 =  hslider("Mod1", 130, 1, 1000, 1) / 1000000;
+  epsilon2 =  hslider("Mod2",  63, 1, 1000, 1) / 1000000;
+  epsilon3 =  hslider("Mod3",  43, 1, 1000, 1) / 1000000;
+  epsilon4 =  hslider("Mod4",  20, 1, 1000, 1) / 1000000;
+
   mods = x,xq,-x,-xq , y,yq,-y,-yq, z,zq,-z,-zq, a,aq,-a,-aq letrec {
     'xq = os.impulse + xq - epsilon1*x;
     'x = epsilon1 * (xq - epsilon1 *x) + x;
