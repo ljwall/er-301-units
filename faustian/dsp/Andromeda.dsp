@@ -14,35 +14,34 @@ andromeda(decay, low_pass, high_pass) = _,_ : + : *(0.5) : diffusion_network : (
   line = de.fdelayltv(2, 28800);
   taps = (0.047, 0.120, 0.134, 0.146, 0.158, 0.169, 0.180, 0.190, 0.200, 0.209, 0.217, 0.233, 0.240, 0.244, 0.225, 0.247);
 
-  //epsilon = 0.00013; // Around 1Hz
+  mod = hslider("mod", 50, 0, 100, 0);
 
-  //epsilon1 =  0.000130;
-  //epsilon2 =  0.000063;
-  //epsilon3 =  0.000043;
-  //epsilon4 =  0.000020;
+  min_mod = 31, 25, 19, 11;
+  mid_mod = 130, 63, 43, 20;
+  max_mod = 313, 310, 251, 250;
 
-  //epsilon1 =  0.000063;
-  //epsilon2 =  0.000043;
-  //epsilon3 =  0.000020;
-  //epsilon4 =  0.000005;
 
-  epsilon1 =  hslider("Mod1", 130, 1, 1000, 1) / 1000000;
-  epsilon2 =  hslider("Mod2",  63, 1, 1000, 1) / 1000000;
-  epsilon3 =  hslider("Mod3",  43, 1, 1000, 1) / 1000000;
-  epsilon4 =  hslider("Mod4",  20, 1, 1000, 1) / 1000000;
+  epsilon = par(i, 4,
+    (mod <= 50)*(ba.take(i+1, min_mod) + (mod/50) * (ba.take(i+1, mid_mod) - ba.take(i+1, min_mod))) +
+    (mod > 50)*(ba.take(i+1, mid_mod) + (mod/50 - 1) * (ba.take(i+1, max_mod) - ba.take(i+1, mid_mod)))
+  );
+  e1 = ba.take(1, epsilon) / 1000000;
+  e2 = ba.take(2, epsilon) / 1000000;
+  e3 = ba.take(3, epsilon) / 1000000;
+  e4 = ba.take(4, epsilon) / 1000000;
 
   mods = x,xq,-x,-xq , y,yq,-y,-yq, z,zq,-z,-zq, a,aq,-a,-aq letrec {
-    'xq = os.impulse + xq - epsilon1*x;
-    'x = epsilon1 * (xq - epsilon1 *x) + x;
+    'xq = os.impulse + xq - e1*x;
+    'x = e1 * (xq - e1 *x) + x;
 
-    'yq = os.impulse + yq - epsilon2*y;
-    'y = epsilon2 * (yq - epsilon2 *y) + y;
+    'yq = os.impulse + yq - e2*y;
+    'y = e2 * (yq - e2 *y) + y;
 
-    'zq = os.impulse + zq - epsilon3*z;
-    'z = epsilon3 * (zq - epsilon3 *z) + z;
+    'zq = os.impulse + zq - e3*z;
+    'z = e3 * (zq - e3 *z) + z;
 
-    'aq = os.impulse + aq - epsilon4*a;
-    'a = epsilon4 * (aq - epsilon4 *a) + a;
+    'aq = os.impulse + aq - e4*a;
+    'a = e4 * (aq - e4 *a) + a;
   };
   limiter(x) = 2 * x / sqrt(x*x +4);
   depth = ba.sec2samp(0.004);
@@ -68,8 +67,8 @@ declare er301_out2 "OutR";
 
 process = _,_ <: _,_,andromeda(decay_ctrl, low_ctrl, high_ctrl): dry_wet_mix(dry_wet_ctr) with {
   decay_ctrl = hslider("Decay", 0.8, 0, 5, 0.001) : si.smoo;
-  low_ctrl = hslider("HighCut", 20000, 100, 20000, 100) : min(20000);
-  high_ctrl = hslider("LowCut", 20, 20, 20000, 100) : max(20);
+  low_ctrl = hslider("HighCut", 20000, 100, 20000, 100) : min(20000) : max(100);
+  high_ctrl = hslider("LowCut", 20, 20, 20000, 100) : min(20000) : max(20);
   dry_wet_ctr = hslider("DryWet", 0.25, 0, 1, 0.001) : si.smoo;
   dry_wet_mix(mix, dry_l, dry_r, wet_l, wet_r) = (1-mix) * dry_l, (1-mix) * dry_r, mix * wet_l, mix * wet_r :> _,_;
 };

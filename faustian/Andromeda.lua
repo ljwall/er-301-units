@@ -20,26 +20,13 @@ end
 function Andromeda:onLoadGraph(channelCount)
   local rev = self:addObject("rev", lib.Andromeda())
 
-  local mod1 = self:addObject("mod1", app.ParameterAdapter())
-  tie(rev, "Mod1", mod1, "Out")
-  self:addMonoBranch("mod1", mod1, "In", mod1, "Out")
-
-  local mod2 = self:addObject("mod2", app.ParameterAdapter())
-  tie(rev, "Mod2", mod2, "Out")
-  self:addMonoBranch("mod2", mod2, "In", mod2, "Out")
-
-  local mod3 = self:addObject("mod3", app.ParameterAdapter())
-  tie(rev, "Mod3", mod3, "Out")
-  self:addMonoBranch("mod3", mod3, "In", mod3, "Out")
-
-  local mod4 = self:addObject("mod4", app.ParameterAdapter())
-  tie(rev, "Mod4", mod4, "Out")
-  self:addMonoBranch("mod4", mod4, "In", mod4, "Out")
+  local mod = self:addObject("mod", app.ParameterAdapter())
+  tie(rev, "mod", mod, "Out")
+  self:addMonoBranch("mod", mod, "In", mod, "Out")
 
   local high = self:addObject("HighCut", app.ParameterAdapter())
   local low = self:addObject("LowCut", app.ParameterAdapter())
   local decay = self:addObject("Decay", app.ParameterAdapter())
-  -- local damping = self:addObject("Damping", app.ParameterAdapter())
   local drywet = self:addObject("DryWet", app.ParameterAdapter())
 
   tie(rev, "HighCut", high, "Out")
@@ -50,9 +37,6 @@ function Andromeda:onLoadGraph(channelCount)
 
   tie(rev, "Decay", decay, "Out")
   self:addMonoBranch("decay", decay, "In", decay, "Out")
-
-  -- tie(rev, "Damping", damping, "Out")
-  -- self:addMonoBranch("damping", damping, "In", damping, "Out")
 
   tie(rev, "DryWet", drywet, "Out")
   self:addMonoBranch("drywet", drywet, "In", drywet, "Out")
@@ -70,16 +54,10 @@ end
 
 local views = {
   expanded = {
-    -- "predelay",
-    -- "bandwidth",
-    "highcut",
     "lowcut",
-    "mod1",
-    "mod2",
-    "mod3",
-    "mod4",
+    "highcut",
     "decay",
-    -- "damping",
+    "mod",
     "drywet",
   },
   collapsed = {},
@@ -90,51 +68,18 @@ local views = {
 local fbMap = app.LinearDialMap(0, 5)
 fbMap:setSteps(0.1, 0.01, 0.001, 0.0001)
 
-local modmap = app.LinearDialMap(1, 1000)
-modmap:setSteps(100, 10, 5, 1)
-
 function Andromeda:onLoadViews(objects, branches)
   local controls = {}
 
-  controls.mod1 = GainBias {
-    button = "mod1",
-    description = "mod1",
-    branch = branches.mod1,
-    gainbias = objects.mod1,
-    range = objects.mod1,
+  controls.mod = GainBias {
+    button = "Mod",
+    description = "Mod Rate",
+    branch = branches.mod,
+    gainbias = objects.mod,
+    range = objects.mod,
     biasUnits = app.unitNone,
-    biasMap = modmap,
-    initialBias = 130,
-  }
-  controls.mod2 = GainBias {
-    button = "mod2",
-    description = "mod2",
-    branch = branches.mod2,
-    gainbias = objects.mod2,
-    range = objects.mod2,
-    biasUnits = app.unitNone,
-    biasMap = modmap,
-    initialBias = 63,
-  }
-  controls.mod3 = GainBias {
-    button = "mod3",
-    description = "mod3",
-    branch = branches.mod3,
-    gainbias = objects.mod3,
-    range = objects.mod3,
-    biasUnits = app.unitNone,
-    biasMap = modmap,
-    initialBias = 43,
-  }
-  controls.mod4 = GainBias {
-    button = "mod4",
-    description = "mod4",
-    branch = branches.mod4,
-    gainbias = objects.mod4,
-    range = objects.mod4,
-    biasUnits = app.unitNone,
-    biasMap = modmap,
-    initialBias = 20,
+    biasMap = Encoder.getMap("int[0,100]"),
+    initialBias = 50,
   }
 
   controls.highcut = GainBias {
