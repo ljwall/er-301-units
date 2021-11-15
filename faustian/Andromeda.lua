@@ -12,8 +12,8 @@ local Andromeda = Class {}
 Andromeda:include(Unit)
 
 function Andromeda:init(args)
-  args.title = "Andromeda Reverb"
-  args.mnemonic = "DR"
+  args.title = "Andromeda Nebula"
+  args.mnemonic = "AN"
   Unit.init(self, args)
 end
 

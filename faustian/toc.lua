@@ -11,7 +11,7 @@ return {
     },
     {
       -- Title and category control how this unit appears in the unit browser.
-      title = "Andromeda",
+      title = "Andromeda Nebula",
       moduleName = "Andromeda",
       category = "Delays and Reverb",
     },
